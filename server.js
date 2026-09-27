@@ -60,13 +60,13 @@ app.post('/api/invoice', async (req, res) => {
     if (!price) return res.status(400).json({ error: 'Unknown plan' });
 
     const invoice = await cryptoPay('createInvoice', {
-      currency_type: 'fiat',
-      fiat: price.currency,
-      amount: String(price.amount),
-      description: price.title,
-      payload: JSON.stringify({ plan, userId: userId || null }),
-      expires_in: 3600
-    });
+  currency_type: 'crypto',
+  asset: price.currency,
+  amount: String(price.amount),
+  description: price.title,
+  payload: JSON.stringify({ plan, userId: userId || null }),
+  expires_in: 3600
+});
 
     // Возвращаем ссылку на оплату
     res.json({
