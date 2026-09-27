@@ -1,1 +1,16 @@
-
+{
+  "name": "pravo1000-backend",
+  "version": "1.0.0",
+  "description": "Backend для приёма оплаты в PRAVO 1000",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "node-fetch": "^2.7.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
