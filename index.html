@@ -322,11 +322,33 @@ function pick(btn, val) {
 }
 
 /* ================= SHOP ================== */
-function buy(title, price) {
+async function buy(title, price) {
   document.getElementById('payPrice').textContent = price;
-  toast(`Выбрано: ${title}`);
   show('payment');
-}
+  let plan = 'single';
+  if (title.includes('5 докум')) plan = 'pack5';
+  else if (title.includes('10 докум')) plan = 'pack10';
+  else if (title.includes('Безлимит')) plan = 'unlimited';
+  toast('Создаём счёт...');
+  try {
+    const res = await fetch(CONFIG.api + '/api/invoice', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan })
+    });
+    const data = await res.json();
+    if (data.ok && data.pay_url) {
+      if (tg?.openLink) tg.openLink(data.pay_url);
+      else window.open(data.pay_url, '_blank');
+      toast('Счёт создан — оплатите в @CryptoBot');
+    } else {
+      toast('Ошибка: не удалось создать счёт');
+    }
+  } catch (e) {
+    toast('Ошибка связи с сервером');
+    console.error(e);
+  }
+ }
 
 /* ================= WHEEL ================= */
 const wheelPrizes = [
