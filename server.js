@@ -15,12 +15,12 @@ const PORT = process.env.PORT || 3000;
 // Разрешённые источники (CORS) — твой GitHub Pages
 const ALLOWED_ORIGIN = 'https://heidemann987.github.io';
 
-// Тарифы (в рублях — конвертация в крипту через API)
+// // Тарифы (в USDT — цена сразу в крипте)
 const PRICES = {
-  single: { amount: 1000, currency: 'RUB', title: 'PRAVO 1000 — 1 документ' },
-  pack5: { amount: 4000, currency: 'RUB', title: 'PRAVO 1000 — 5 документов' },
-  pack10: { amount: 8000, currency: 'RUB', title: 'PRAVO 1000 — 10 документов' },
-  unlimited: { amount: 50000, currency: 'RUB', title: 'PRAVO 1000 — Безлимит' }
+  single: { amount: 2, currency: 'USDT', title: 'PRAVO 1000 — 1 документ' },
+  pack5: { amount: 8, currency: 'USDT', title: 'PRAVO 1000 — 5 документов' },
+  pack10: { amount: 15, currency: 'USDT', title: 'PRAVO 1000 — 10 документов' },
+  unlimited: { amount: 100, currency: 'USDT', title: 'PRAVO 1000 — Безлимит' }
 };
 
 // ============ CORS ============
