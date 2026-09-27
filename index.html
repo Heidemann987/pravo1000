@@ -334,8 +334,10 @@ async function buy(title, price) {
     const res = await fetch(CONFIG.api + '/api/invoice', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan })
-    });
+      body: JSON.stringify({
+  plan,
+  userId: tg?.initDataUnsafe?.user?.id || null
+})
     const data = await res.json();
     if (data.ok && data.pay_url) {
       if (tg?.openLink) tg.openLink(data.pay_url);
