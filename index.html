@@ -337,7 +337,8 @@ async function buy(title, price) {
       body: JSON.stringify({
   plan,
   userId: tg?.initDataUnsafe?.user?.id || null
-})
+      })
+    }); 
     const data = await res.json();
     if (data.ok && data.pay_url) {
       if (tg?.openLink) tg.openLink(data.pay_url);
