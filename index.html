@@ -69,7 +69,51 @@ type html>
     <button class="btn secondary" onclick="show('shop')">🛒 Магазин документов</button>
   </section>
 
-  <section id="jurisdiction" class="screen">
+  <section id="walletGuide" class="screen">
+  <h1>💎 Как открыть кошелёк</h1>
+  <p class="sub">Инструкция для тех, у кого ещё нет Telegram Wallet. Займёт 2 минуты.</p>
+
+  <div class="card">
+    <b>Шаг 1. Найдите кошелёк</b>
+    <p class="muted">В поиске Telegram введите:</p>
+    <p style="font-size:18px;font-weight:800;color:#147eae;">@wallet</p>
+    <p class="muted">У бота должна быть синяя галочка ✓ и надпись «Wallet». Это официальный сервис.</p>
+    <button class="btn secondary" onclick="openLink('https://t.me/wallet')">🌐 Открыть @wallet</button>
+  </div>
+
+  <div class="card">
+    <b>Шаг 2. Запустите бота</b>
+    <p class="muted">Откройте чат с @wallet и нажмите «Start».</p>
+    <p class="muted">Прочитайте условия и нажмите «Open Wallet».</p>
+  </div>
+
+  <div class="card">
+    <b>Шаг 3. Настройте безопасность</b>
+    <p class="muted">Установите PIN-код (4 или 6 цифр).</p>
+    <p class="muted">Можно включить биометрию в настройках.</p>
+  </div>
+
+  <div class="card">
+    <b>Шаг 4. Пополните кошелёк</b>
+    <p class="muted">В меню кошелька нажмите «+» или «Add Crypto».</p>
+    <p class="muted">• P2P Express — покупка с карты у мерчанта.</p>
+    <p class="muted">• Банковская карта — если доступна.</p>
+    <p class="muted">• Перевод — если у вас уже есть крипта.</p>
+  </div>
+
+  <div class="card">
+    <b>Шаг 5. Готово!</b>
+    <p class="muted">Вернитесь в PRAVO 1000, выберите документ и нажмите «Купить» — оплата откроется в @wallet.</p>
+    <button class="btn green" onclick="show('shop')">🛒 Перейти в магазин</button>
+  </div>
+
+  <div class="card" style="background:#fff8e6;border-color:#f2c14e;">
+    <b>⚠️ Важно</b>
+    <p class="muted">Официальный кошелёк — только <b>@wallet</b>. Не переводите деньги на «похожие» боты без галочки.</p>
+  </div>
+
+  <button class="btn secondary" onclick="show('home')">← На главную</button>
+ </section><section id="jurisdiction" class="screen">
     <h1>Выберите юрисдикцию</h1>
     <p class="sub">Выберите страну или передайте дело администратору.</p>
     <button class="btn" onclick="jur('🇰🇿 Казахстан')">🇰🇿 Казахстан</button>
