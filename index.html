@@ -336,14 +336,12 @@
      ========================================================= */
   const CONFIG = {
     api: 'https://pravo1000.onrender.com',
-    // Домены, куда разрешено открывать ссылки (защита от фишинга)
     allowedLinkHosts: ['t.me', 'telegram.org', 'egov.kz', 'eotinish.kz'],
-    // Единственный источник правды по ценам
     plans: {
-      single:    { title: '1 документ',              price: 1000,  label: '1 000 ₸'  },
-      pack5:     { title: '5 документов',            price: 4000,  label: '4 000 ₸'  },
-      pack10:    { title: '10 документов',           price: 8000,  label: '8 000 ₸'  },
-      unlimited: { title: 'Безлимит до конца года',  price: 50000, label: '50 000 ₸' }
+      single:    { title: '1 документ',             price: 1000,  label: '1 000 ₸'  },
+      pack5:     { title: '5 документов',           price: 4000,  label: '4 000 ₸'  },
+      pack10:    { title: '10 документов',          price: 8000,  label: '8 000 ₸'  },
+      unlimited: { title: 'Безлимит до конца года', price: 50000, label: '50 000 ₸' }
     },
     priceCurrency: '₸'
   };
@@ -363,11 +361,9 @@
       tg.enableClosingConfirmation?.();
     } catch (e) { /* старые клиенты */ }
 
-    // Тема
     applyTheme(tg.themeParams);
     tg.onEvent?.('themeChanged', () => applyTheme(tg.themeParams));
 
-    // Вьюпорт (клавиатура)
     tg.onEvent?.('viewportChanged', ({ isStateStable }) => {
       if (isStateStable) window.scrollTo(0, 0);
     });
@@ -376,9 +372,9 @@
   function applyTheme(p) {
     if (!p) return;
     const r = document.documentElement.style;
-    if (p.bg_color)    r.setProperty('--bg', p.bg_color);
-    if (p.text_color)  r.setProperty('--text', p.text_color);
-    if (p.hint_color)  r.setProperty('--muted', p.hint_color);
+    if (p.bg_color)     r.setProperty('--bg', p.bg_color);
+    if (p.text_color)   r.setProperty('--text', p.text_color);
+    if (p.hint_color)   r.setProperty('--muted', p.hint_color);
     if (p.button_color) r.setProperty('--accent', p.button_color);
   }
 
@@ -419,7 +415,6 @@
     show(prev, { push: false });
   }
 
-  // Один раз навешиваем обработчик — не перезаписываем
   if (tg?.BackButton) {
     tg.BackButton.onClick(goBack);
   }
@@ -478,4 +473,10 @@
   function renderShop() {
     const list = document.getElementById('shopList');
     list.innerHTML = '';
-    Object.entries(CONFIG.pl
+    Object.entries(CONFIG.plans).forEach(([key, p]) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <b>${p.title}</b>
+        <div class="price">${p.label}</div>
+    
