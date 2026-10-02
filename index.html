@@ -229,12 +229,12 @@
       <b>Полный документ доступен после оплаты</b>
       <p class="muted" style="margin:8px 0 0">Мы не показываем содержимое до подтверждения платежа.</p>
     </div>
-    <div class="price" id="payPrice">—</div>
+    <div class="price" id="payPrice">2 USDT</div>
     <div class="card">
       <b>💎 Оплата</b>
-      <p class="muted">Оплата проходит через Telegram Wallet / CryptoBot. После подтверждения документ откроется в этом чате.</p>
+      <p class="muted">Оплата проходит через Telegram Wallet / CryptoBot. Стоимость — <b>2 USDT</b> за документ.</p>
     </div>
-    <button class="btn" id="payBtn" data-buy="single">💎 Оплатить</button>
+    <button class="btn" id="payBtn" data-buy="single">💎 Оплатить 2 USDT</button>
     <button class="btn secondary" data-nav="adminchat">👤 Связаться с администратором</button>
   </section>
 
@@ -338,12 +338,12 @@
     api: 'https://pravo1000.onrender.com',
     allowedLinkHosts: ['t.me', 'telegram.org', 'egov.kz', 'eotinish.kz'],
     plans: {
-      single:    { title: '1 документ',             price: 1000,  label: '1 000 ₸'  },
-      pack5:     { title: '5 документов',           price: 4000,  label: '4 000 ₸'  },
-      pack10:    { title: '10 документов',          price: 8000,  label: '8 000 ₸'  },
-      unlimited: { title: 'Безлимит до конца года', price: 50000, label: '50 000 ₸' }
+      single:    { title: '1 документ',             price: 2, label: '2 USDT' },
+      pack5:     { title: '5 документов',           price: 2, label: '2 USDT' },
+      pack10:    { title: '10 документов',          price: 2, label: '2 USDT' },
+      unlimited: { title: 'Безлимит до конца года', price: 2, label: '2 USDT' }
     },
-    priceCurrency: '₸'
+    priceCurrency: 'USDT'
   };
 
   /* =========================================================
@@ -479,7 +479,8 @@
       card.innerHTML = `
         <b>${p.title}</b>
         <div class="price">${p.label}</div>
-            <button class="btn" data-buy="${key}">Купить</button>
+        <button class="btn
+        " data-buy="${key}">Купить</button>
       `;
       list.appendChild(card);
     });
@@ -569,8 +570,8 @@
     '🎉 Бесплатный документ',
     '🎁 Бесплатный документ за друга',
     '🔄 Прокрути ещё раз',
-    '🔥 50% скидка — 3 часа',
-    '💎 5 документов за 3 000 ₸'
+    '🔥 Скидка 50% — 3 часа',
+    '💎 5 документов за 5 USDT'
   ];
   let spinning = false;
 
