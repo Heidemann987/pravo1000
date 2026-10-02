@@ -1,4 +1,4 @@
-type html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="utf-8">
@@ -9,9 +9,19 @@ type html>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   *{box-sizing:border-box}
-  :root{--bg:#eef2f6;--card:#f7f9fb;--line:#e1e6eb;--accent:#229ed9;--accent-d:#147eae;--text:#17202a;--muted:#68727d}
-  body{margin:0;background:var(--bg);font:15px Arial,sans-serif;color:var(--text);-webkit-tap-highlight-color:transparent}
-  .app{max-width:430px;margin:auto;min-height:100vh;background:#fff}
+  :root{
+    --bg:#eef2f6;--card:#f7f9fb;--line:#e1e6eb;
+    --accent:#229ed9;--accent-d:#147eae;
+    --text:#17202a;--muted:#68727d;
+    --success:#25a66a;--danger:#d9534f;--gold:#e5a523;
+  }
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    color:var(--text);-webkit-tap-highlight-color:transparent;
+    overscroll-behavior-y:contain;
+  }
+  .app{max-width:430px;margin:auto;min-height:100vh;background:#fff;position:relative}
   .top{background:var(--accent);color:#fff;padding:15px;position:sticky;top:0;z-index:5}
   .top b{font-size:18px}
   .top small{display:block;margin-top:3px;opacity:.85}
@@ -22,13 +32,18 @@ type html>
   h1{font-size:24px;margin:4px 0 9px}
   h2{font-size:18px;margin:0 0 8px}
   .sub,.muted{color:var(--muted);line-height:1.45}
-  .btn{width:100%;border:0;border-radius:12px;background:var(--accent);color:#fff;padding:14px;margin:6px 0;font-weight:700;font-size:15px;cursor:pointer;transition:transform .08s,filter .15s}
+  .btn{
+    width:100%;border:0;border-radius:12px;background:var(--accent);color:#fff;
+    padding:14px;margin:6px 0;font-weight:700;font-size:15px;cursor:pointer;
+    transition:transform .08s,filter .15s,opacity .15s;
+  }
   .btn:active{transform:scale(.98)}
   .btn:focus-visible{outline:3px solid #ffd76e;outline-offset:2px}
+  .btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
   .btn.secondary{background:#e9f5fb;color:var(--accent-d)}
-  .btn.green{background:#25a66a}
-  .btn.gold{background:#e5a523}
-  .btn.red{background:#d9534f}
+  .btn.green{background:var(--success)}
+  .btn.gold{background:var(--gold)}
+  .btn.red{background:var(--danger)}
   .btn.selected{background:var(--accent);color:#fff;box-shadow:0 0 0 2px #ffd76e inset}
   .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
   .tag{display:inline-block;padding:4px 8px;border-radius:20px;background:#e8f4fb;color:#1683b3;font-size:11px;margin:3px}
@@ -36,90 +51,118 @@ type html>
   .msg{padding:11px 13px;border-radius:14px;max-width:88%;line-height:1.4}
   .bot{background:#eef5f9}
   .user{background:#d9fdd3;align-self:flex-end}
-  .input{width:100%;padding:13px;border:1px solid #ccd4dc;border-radius:10px;font-size:15px}
+  .input{
+    width:100%;padding:13px;border:1px solid #ccd4dc;border-radius:10px;
+    font-size:15px;font-family:inherit;background:#fff;color:inherit;
+  }
   .input:focus{outline:none;border-color:var(--accent)}
-  .preview{max-height:340px;overflow:hidden;border-radius:8px;padding:25px;background:#ddd;filter:blur(5px);line-height:1.8;position:relative}
-  .preview::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 60%,#ddd)}
-  .lock{text-align:center;margin:16px 0 6px;position:relative;font-size:18px;font-weight:800}
+  .preview-lock{
+    text-align:center;padding:32px 16px;border-radius:12px;
+    background:linear-gradient(135deg,#eef5f9,#dbeaf3);
+    border:1px dashed var(--accent);
+  }
+  .preview-lock .lock-icon{font-size:32px;display:block;margin-bottom:8px}
   .price{text-align:center;font-size:26px;font-weight:800;margin:12px}
   .card .price{font-size:22px;margin:8px 0}
-  .wheel{height:220px;width:220px;border-radius:50%;margin:20px auto;background:conic-gradient(#e85d75 0 20%,#f2c14e 20% 40%,#4ea699 40% 60%,#6c8cd5 60% 80%,#9b6bc7 80%);border:8px solid #fff;box-shadow:0 3px 15px #bbb;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900}
+  .wheel{
+    height:220px;width:220px;border-radius:50%;margin:20px auto;
+    background:conic-gradient(#e85d75 0 20%,#f2c14e 20% 40%,#4ea699 40% 60%,#6c8cd5 60% 80%,#9b6bc7 80%);
+    border:8px solid #fff;box-shadow:0 3px 15px #bbb;
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;
+    user-select:none;
+  }
   .row{display:flex;gap:8px}
   .row>*{flex:1}
-  .nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(430px,100%);background:#fff;border-top:1px solid #ddd;padding:8px 8px calc(8px + env(safe-area-inset-bottom));display:flex;gap:6px;z-index:10}
-  .nav button{flex:1;border:0;border-radius:9px;padding:9px 3px;font-size:11px;background:#fff;cursor:pointer}
+  .nav{
+    position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+    width:min(430px,100%);background:#fff;border-top:1px solid #ddd;
+    padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+    display:flex;gap:6px;z-index:10;
+  }
+  .nav button{flex:1;border:0;border-radius:9px;padding:9px 3px;font-size:11px;background:#fff;cursor:pointer;color:inherit}
   .nav button:focus-visible{outline:2px solid var(--accent)}
-  .toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%) translateY(20px);background:#17202a;color:#fff;padding:11px 16px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:90%;text-align:center;z-index:20}
+  .toast{
+    position:fixed;left:50%;bottom:80px;transform:translateX(-50%) translateY(20px);
+    background:#17202a;color:#fff;padding:11px 16px;border-radius:10px;font-size:13px;
+    opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
+    max-width:90%;text-align:center;z-index:20;
+  }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .spinner{
+    display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);
+    border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;
+    vertical-align:-2px;margin-right:6px;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 <div class="app">
   <header class="top">
     <b>⚖️ PRAVO 1000</b>
-    <small>Интерактивный прототип Telegram-бота</small>
+    <small>Подготовка юридических документов</small>
   </header>
 
+  <!-- ================= HOME ================= -->
   <section id="home" class="screen active">
     <h1>Добро пожаловать</h1>
     <p class="sub">Подготовка юридических документов. Персональные данные бот не запрашивает — в документе остаются поля для самостоятельного заполнения.</p>
-    <button class="btn" onclick="show('jurisdiction')">Начать</button>
-   <button class="btn secondary" onclick="show('walletGuide')">💎 Как открыть кошелёк</button>
-    <button class="btn secondary" onclick="show('wheel')">🎡 Колесо Фемиды</button>
-    <button class="btn secondary" onclick="show('shop')">🛒 Магазин документов</button>
+    <button class="btn" data-nav="jurisdiction">Начать</button>
+    <button class="btn secondary" data-nav="walletGuide">💎 Как открыть кошелёк</button>
+    <button class="btn secondary" data-nav="wheel">🎡 Колесо Фемиды</button>
+    <button class="btn secondary" data-nav="shop">🛒 Магазин документов</button>
   </section>
 
+  <!-- ================= WALLET GUIDE ================= -->
   <section id="walletGuide" class="screen">
-  <h1>💎 Как открыть кошелёк</h1>
-  <p class="sub">Инструкция для тех, у кого ещё нет Telegram Wallet. Займёт 2 минуты.</p>
+    <h1>💎 Как открыть кошелёк</h1>
+    <p class="sub">Инструкция для тех, у кого ещё нет Telegram Wallet. Займёт 2 минуты.</p>
 
-  <div class="card">
-    <b>Шаг 1. Найдите кошелёк</b>
-    <p class="muted">В поиске Telegram введите:</p>
-    <p style="font-size:18px;font-weight:800;color:#147eae;">@wallet</p>
-    <p class="muted">У бота должна быть синяя галочка ✓ и надпись «Wallet». Это официальный сервис.</p>
-    <button class="btn secondary" onclick="openLink('https://t.me/wallet')">🌐 Открыть @wallet</button>
-  </div>
+    <div class="card">
+      <b>Шаг 1. Найдите кошелёк</b>
+      <p class="muted">В поиске Telegram введите:</p>
+      <p style="font-size:18px;font-weight:800;color:#147eae;">@wallet</p>
+      <p class="muted">У бота должна быть синяя галочка ✓ и надпись «Wallet». Это официальный сервис.</p>
+      <button class="btn secondary" data-link="https://t.me/wallet">🌐 Открыть @wallet</button>
+    </div>
 
-  <div class="card">
-    <b>Шаг 2. Запустите бота</b>
-    <p class="muted">Откройте чат с @wallet и нажмите «Start».</p>
-    <p class="muted">Прочитайте условия и нажмите «Open Wallet».</p>
-  </div>
+    <div class="card">
+      <b>Шаг 2. Запустите бота</b>
+      <p class="muted">Откройте чат с @wallet и нажмите «Start». Прочитайте условия и нажмите «Open Wallet».</p>
+    </div>
 
-  <div class="card">
-    <b>Шаг 3. Настройте безопасность</b>
-    <p class="muted">Установите PIN-код (4 или 6 цифр).</p>
-    <p class="muted">Можно включить биометрию в настройках.</p>
-  </div>
+    <div class="card">
+      <b>Шаг 3. Настройте безопасность</b>
+      <p class="muted">Установите PIN-код (4 или 6 цифр). Можно включить биометрию в настройках.</p>
+    </div>
 
-  <div class="card">
-    <b>Шаг 4. Пополните кошелёк</b>
-    <p class="muted">В меню кошелька нажмите «+» или «Add Crypto».</p>
-    <p class="muted">• P2P Express — покупка с карты у мерчанта.</p>
-    <p class="muted">• Банковская карта — если доступна.</p>
-    <p class="muted">• Перевод — если у вас уже есть крипта.</p>
-  </div>
+    <div class="card">
+      <b>Шаг 4. Пополните кошелёк</b>
+      <p class="muted">В меню кошелька нажмите «+» или «Add Crypto». Используйте P2P Express, банковскую карту или перевод.</p>
+    </div>
 
-  <div class="card">
-    <b>Шаг 5. Готово!</b>
-    <p class="muted">Вернитесь в PRAVO 1000, выберите документ и нажмите «Купить» — оплата откроется в @wallet.</p>
-    <button class="btn green" onclick="show('shop')">🛒 Перейти в магазин</button>
-  </div>
+    <div class="card">
+      <b>Шаг 5. Готово!</b>
+      <p class="muted">Вернитесь в PRAVO 1000, выберите документ и нажмите «Купить» — оплата откроется в @wallet.</p>
+      <button class="btn green" data-nav="shop">🛒 Перейти в магазин</button>
+    </div>
 
-  <div class="card" style="background:#fff8e6;border-color:#f2c14e;">
-    <b>⚠️ Важно</b>
-    <p class="muted">Официальный кошелёк — только <b>@wallet</b>. Не переводите деньги на «похожие» боты без галочки.</p>
-  </div>
+    <div class="card" style="background:#fff8e6;border-color:#f2c14e;">
+      <b>⚠️ Важно</b>
+      <p class="muted">Официальный кошелёк — только <b>@wallet</b>. Не переводите деньги на «похожие» боты без галочки.</p>
+    </div>
 
-  <button class="btn secondary" onclick="show('home')">← На главную</button>
- </section><section id="jurisdiction" class="screen">
+    <button class="btn secondary" data-nav="home">← На главную</button>
+  </section>
+
+  <!-- ================= JURISDICTION ================= -->
+  <section id="jurisdiction" class="screen">
     <h1>Выберите юрисдикцию</h1>
     <p class="sub">Выберите страну или передайте дело администратору.</p>
-    <button class="btn" onclick="jur('🇰🇿 Казахстан')">🇰🇿 Казахстан</button>
-    <button class="btn" onclick="jur('🇷🇺 Россия')">🇷🇺 Россия</button>
-    <button class="btn" onclick="jur('🇩🇪 Германия')">🇩🇪 Германия</button>
-    <button class="btn secondary" onclick="show('other')">🌍 Другая</button>
+    <button class="btn" data-jur="🇰🇿 Казахстан">🇰🇿 Казахстан</button>
+    <button class="btn" data-jur="🇷🇺 Россия">🇷🇺 Россия</button>
+    <button class="btn" data-jur="🇩🇪 Германия">🇩🇪 Германия</button>
+    <button class="btn secondary" data-nav="other">🌍 Другая</button>
   </section>
 
   <section id="other" class="screen">
@@ -129,39 +172,40 @@ type html>
       <b>Что вас интересует?</b>
       <p class="muted">Опишите ситуацию в чате с администратором — он подберёт формат документа и порядок подачи.</p>
     </div>
-    <button class="btn" onclick="show('adminchat')">👤 Начать чат с администратором</button>
-    <button class="btn secondary" onclick="show('jurisdiction')">← Назад</button>
+    <button class="btn" data-nav="adminchat">👤 Начать чат с администратором</button>
+    <button class="btn secondary" data-nav="jurisdiction">← Назад</button>
   </section>
 
+  <!-- ================= INTAKE ================= -->
   <section id="intake" class="screen">
     <h1 id="jt">🇰🇿 Казахстан</h1>
     <div class="chat" role="log" aria-live="polite">
       <div class="msg bot">Опишите ситуацию своими словами. Не указывайте ИИН, ФИО, адрес или телефон.</div>
-      <div class="msg user">Банк заблокировал мою карту и не объясняет причину.</div>
-      <div class="msg bot">Какая область права ближе всего?</div>
     </div>
-    <button class="btn" onclick="show('questions')">Банковское право</button>
-    <button class="btn secondary" onclick="show('questions')">Не знаю — определить автоматически</button>
-    <button class="btn secondary" onclick="show('adminchat')">👤 Передать администратору</button>
+    <button class="btn" data-nav="questions">Банковское право</button>
+    <button class="btn secondary" data-nav="questions">Не знаю — определить автоматически</button>
+    <button class="btn secondary" data-nav="adminchat">👤 Передать администратору</button>
   </section>
 
+  <!-- ================= QUESTIONS ================= -->
   <section id="questions" class="screen">
     <h1>Уточняющие вопросы</h1>
     <p class="sub">Собираются только обстоятельства, необходимые для документа.</p>
     <div class="card">
-      <b>Когда произошла блокировка?</b>
-      <input class="input" id="qDate" placeholder="Например: вчера" aria-label="Дата блокировки">
+      <label for="qDate"><b>Когда произошла блокировка?</b></label>
+      <input class="input" id="qDate" placeholder="Например: вчера" aria-label="Дата блокировки" autocomplete="off">
     </div>
     <div class="card">
       <b>Банк сообщил причину?</b>
       <div class="row" style="margin-top:8px">
-        <button class="btn secondary" onclick="pick(this,'no')">Нет</button>
-        <button class="btn secondary" onclick="pick(this,'yes')">Да</button>
+        <button class="btn secondary" data-pick="no">Нет</button>
+        <button class="btn secondary" data-pick="yes">Да</button>
       </div>
     </div>
-    <button class="btn" onclick="show('draft')">Продолжить</button>
+    <button class="btn" data-nav="draft">Продолжить</button>
   </section>
 
+  <!-- ================= DRAFT ================= -->
   <section id="draft" class="screen">
     <h1>Черновик подготовлен</h1>
     <div class="card">
@@ -174,34 +218,27 @@ type html>
       <b>⚠️ Важно</b>
       <p class="muted">Перед подачей самостоятельно впишите персональные данные, дату и подпись и проверьте содержание.</p>
     </div>
-    <button class="btn" onclick="show('payment')">Предварительный просмотр</button>
+    <button class="btn" data-nav="payment">Предварительный просмотр</button>
   </section>
 
+  <!-- ================= PAYMENT ================= -->
   <section id="payment" class="screen">
     <h1>Предварительный просмотр</h1>
-    <div class="preview" aria-hidden="true">
-      <h2>ОБРАЩЕНИЕ</h2>
-      <p>В __________________________</p>
-      <p>От: _________________________</p>
-      <p>ИИН: ________________________</p>
-      <p>Адрес: ______________________</p>
-      <hr>
-      <p>Прошу рассмотреть моё обращение по обстоятельствам, изложенным ниже.</p>
-      <p>________________________________________</p>
-      <p>________________________________________</p>
-      <p>________________________________________</p>
+    <div class="preview-lock" aria-hidden="true">
+      <span class="lock-icon">🔒</span>
+      <b>Полный документ доступен после оплаты</b>
+      <p class="muted" style="margin:8px 0 0">Мы не показываем содержимое до подтверждения платежа.</p>
     </div>
-    <div class="lock">🔒 Полный документ после оплаты</div>
-    <div class="price" id="payPrice">1 000 ₸</div>
+    <div class="price" id="payPrice">—</div>
     <div class="card">
-      <b>💎 Telegram Wallet</b>
-      <p class="muted">Оплата только через Telegram Wallet. Банковские карты и переводы не используются.</p>
-      <p class="muted">Кошелёк получателя: <b id="walletAddr">—</b></p>
+      <b>💎 Оплата</b>
+      <p class="muted">Оплата проходит через Telegram Wallet / CryptoBot. После подтверждения документ откроется в этом чате.</p>
     </div>
-    <button class="btn" onclick="show('paid')">💎 Оплатить Telegram Wallet</button>
-    <button class="btn secondary" onclick="show('adminchat')">👤 Связаться с администратором</button>
+    <button class="btn" id="payBtn" data-buy="single">💎 Оплатить</button>
+    <button class="btn secondary" data-nav="adminchat">👤 Связаться с администратором</button>
   </section>
 
+  <!-- ================= PAID ================= -->
   <section id="paid" class="screen">
     <h1>✅ Оплата подтверждена</h1>
     <p class="sub">Полный документ доступен.</p>
@@ -210,13 +247,14 @@ type html>
       <p class="muted">ЧЕРНОВИК — заполните персональные данные, дату и подпись самостоятельно.</p>
     </div>
     <div class="row">
-      <button class="btn" onclick="toast('PDF скачан — демо')">⬇️ Скачать</button>
-      <button class="btn" onclick="toast('Открыто меню пересылки — демо')">↗️ Переслать</button>
+      <button class="btn" data-toast="PDF скачан — демо">⬇️ Скачать</button>
+      <button class="btn" data-toast="Открыто меню пересылки — демо">↗️ Переслать</button>
     </div>
-    <button class="btn green" onclick="toast('Документ сохранён — демо')">💾 Сохранить</button>
-    <button class="btn secondary" onclick="show('instruction')">📌 Инструкция по подаче</button>
+    <button class="btn green" data-toast="Документ сохранён — демо">💾 Сохранить</button>
+    <button class="btn secondary" data-nav="instruction">📌 Инструкция по подаче</button>
   </section>
 
+  <!-- ================= INSTRUCTION ================= -->
   <section id="instruction" class="screen">
     <h1>Инструкция по подаче</h1>
     <div class="card">
@@ -226,44 +264,28 @@ type html>
     <div class="card">
       <b>2. Подайте документ</b>
       <p class="muted">Используйте официальный канал, указанный для вашего случая.</p>
-      <button class="btn secondary" onclick="openLink('https://egov.kz')">🌐 Открыть eGov</button>
-      <button class="btn secondary" onclick="openLink('https://eotinish.kz')">🌐 Открыть eOtinish</button>
+      <button class="btn secondary" data-link="https://egov.kz">🌐 Открыть eGov</button>
+      <button class="btn secondary" data-link="https://eotinish.kz">🌐 Открыть eOtinish</button>
     </div>
     <div class="card"><b>3. Сохраните подтверждение подачи</b></div>
   </section>
 
+  <!-- ================= SHOP ================= -->
   <section id="shop" class="screen">
     <h1>🛒 Магазин</h1>
-    <div class="card">
-      <b>1 документ</b>
-      <div class="price">1 000 ₸</div>
-      <button class="btn" onclick="buy('1 документ','1 000 ₸')">Купить</button>
-    </div>
-    <div class="card">
-      <b>5 документов</b>
-      <div class="price">4 000 ₸</div>
-      <button class="btn" onclick="buy('5 документов','4 000 ₸')">Купить</button>
-    </div>
-    <div class="card">
-      <b>10 документов</b>
-      <div class="price">8 000 ₸</div>
-      <button class="btn" onclick="buy('10 документов','8 000 ₸')">Купить</button>
-    </div>
-    <div class="card">
-      <b>Безлимит до конца года</b>
-      <div class="price">50 000 ₸</div>
-      <button class="btn" onclick="buy('Безлимит до конца года','50 000 ₸')">Купить</button>
-    </div>
+    <div id="shopList"></div>
   </section>
 
+  <!-- ================= WHEEL ================= -->
   <section id="wheel" class="screen">
     <h1>🎡 Колесо Фемиды</h1>
     <p class="sub">Демо-режим.</p>
     <div class="wheel" id="wheelEl" aria-hidden="true">ФЕМИДА</div>
-    <button class="btn gold" onclick="spin()">🎡 Крутить</button>
+    <button class="btn gold" id="spinBtn">🎡 Крутить</button>
     <div id="wr" class="card" style="display:none" role="status" aria-live="polite"></div>
   </section>
 
+  <!-- ================= ADMIN ================= -->
   <section id="admin" class="screen">
     <h1>🔐 Админ-консоль</h1>
     <p class="sub">Демо-интерфейс владельца.</p>
@@ -275,174 +297,185 @@ type html>
       <b>CASE #1842</b>
       <p>🇰🇿 Казахстан · Банковское право</p>
       <span class="tag">AI</span><span class="tag">Ожидание госоргана</span>
-      <button class="btn" onclick="show('adminchat')">🔐 Открыть секретный чат</button>
+      <button class="btn" data-nav="adminchat">🔐 Открыть чат</button>
     </div>
-    <button class="btn secondary" onclick="toast('Дело передано администратору — демо')">👤 Взять дело вручную</button>
-    <button class="btn secondary" onclick="toast('Открыта переписка — демо')">💬 Переписка</button>
-    <button class="btn secondary" onclick="toast('Открыты платежи — демо')">💰 Платежи</button>
+    <button class="btn secondary" data-toast="Дело передано администратору — демо">👤 Взять дело вручную</button>
+    <button class="btn secondary" data-toast="Открыта переписка — демо">💬 Переписка</button>
+    <button class="btn secondary" data-toast="Открыты платежи — демо">💰 Платежи</button>
   </section>
 
+  <!-- ================= ADMIN CHAT ================= -->
   <section id="adminchat" class="screen">
-    <h1>🔐 Секретный чат</h1>
+    <h1>🔐 Чат с администратором</h1>
     <p class="sub">Пользователь #1842 · CASE #1842</p>
     <div class="chat" role="log" aria-live="polite">
       <div class="msg bot">Добрый день. Уточните, когда произошла блокировка?</div>
       <div class="msg user">Вчера вечером.</div>
     </div>
-    <input class="input" placeholder="Сообщение пользователю..." aria-label="Сообщение пользователю">
-    <button class="btn" onclick="toast('Сообщение отправлено — демо')">Отправить</button>
-    <button class="btn red" onclick="show('admin')">Завершить чат</button>
+    <input class="input" id="adminMsg" placeholder="Сообщение администратору..." aria-label="Сообщение администратору" autocomplete="off">
+    <button class="btn" data-toast="Сообщение отправлено — демо">Отправить</button>
+    <button class="btn red" data-nav="admin">Завершить чат</button>
   </section>
 
   <nav class="nav" aria-label="Основная навигация">
-    <button onclick="show('home')" aria-label="Главная">🏠<br>Главная</button>
-    <button onclick="show('shop')" aria-label="Магазин">🛒<br>Магазин</button>
-    <button onclick="show('wheel')" aria-label="Колесо Фемиды">🎡<br>Колесо</button>
-    <button onclick="show('admin')" aria-label="Админ-консоль">⚙️<br>Админ</button>
+    <button data-nav="home" aria-label="Главная">🏠<br>Главная</button>
+    <button data-nav="shop" aria-label="Магазин">🛒<br>Магазин</button>
+    <button data-nav="wheel" aria-label="Колесо Фемиды">🎡<br>Колесо</button>
+    <button data-nav="admin" aria-label="Админ-консоль">⚙️<br>Админ</button>
   </nav>
 </div>
 
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script>
-/* ================= CONFIG ================= */
-const CONFIG = {
-  wallet: 'PRAVO 1000',
-  api: 'https://pravo1000.onrender.com',
-  prices: {
-    single: 1000,
-    pack5: 4000,
-    pack10: 8000,
-    unlimited: 50000
+(() => {
+  'use strict';
+
+  /* =========================================================
+     CONFIG
+     ========================================================= */
+  const CONFIG = {
+    api: 'https://pravo1000.onrender.com',
+    // Домены, куда разрешено открывать ссылки (защита от фишинга)
+    allowedLinkHosts: ['t.me', 'telegram.org', 'egov.kz', 'eotinish.kz'],
+    // Единственный источник правды по ценам
+    plans: {
+      single:    { title: '1 документ',              price: 1000,  label: '1 000 ₸'  },
+      pack5:     { title: '5 документов',            price: 4000,  label: '4 000 ₸'  },
+      pack10:    { title: '10 документов',           price: 8000,  label: '8 000 ₸'  },
+      unlimited: { title: 'Безлимит до конца года',  price: 50000, label: '50 000 ₸' }
+    },
+    priceCurrency: '₸'
+  };
+
+  /* =========================================================
+     TELEGRAM
+     ========================================================= */
+  const tg = window.Telegram?.WebApp;
+
+  function initTelegram() {
+    if (!tg) return;
+    tg.ready();
+    tg.expand();
+    try {
+      tg.setHeaderColor?.('#229ed9');
+      tg.setBackgroundColor?.('#ffffff');
+      tg.enableClosingConfirmation?.();
+    } catch (e) { /* старые клиенты */ }
+
+    // Тема
+    applyTheme(tg.themeParams);
+    tg.onEvent?.('themeChanged', () => applyTheme(tg.themeParams));
+
+    // Вьюпорт (клавиатура)
+    tg.onEvent?.('viewportChanged', ({ isStateStable }) => {
+      if (isStateStable) window.scrollTo(0, 0);
+    });
   }
-};
 
-/* ============= TELEGRAM WEBAPP ============ */
-const tg = window.Telegram?.WebApp;
-if (tg) {
-  tg.ready();
-  tg.expand();
-  if (tg.setHeaderColor) tg.setHeaderColor('#229ed9');
-  if (tg.setBackgroundColor) tg.setBackgroundColor('#ffffff');
-  if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
-}
+  function applyTheme(p) {
+    if (!p) return;
+    const r = document.documentElement.style;
+    if (p.bg_color)    r.setProperty('--bg', p.bg_color);
+    if (p.text_color)  r.setProperty('--text', p.text_color);
+    if (p.hint_color)  r.setProperty('--muted', p.hint_color);
+    if (p.button_color) r.setProperty('--accent', p.button_color);
+  }
 
-/* ================= NAV ================= */
-const history = [];
-function show(id) {
-  const current = document.querySelector('.screen.active')?.id;
-  if (current && current !== id) history.push(current);
-  document.querySelectorAll('.screen').forEach(x => x.classList.remove('active'));
-  document.getElementById(id)?.classList.add('active');
-  window.scrollTo(0, 0);
-  syncBackButton(id);
-  if (tg?.HapticFeedback) tg.HapticFeedback.selectionChanged();
-}
+  function haptic(type = 'selection') {
+    try {
+      if (type === 'success') tg?.HapticFeedback?.notificationOccurred('success');
+      else if (type === 'impact') tg?.HapticFeedback?.impactOccurred('light');
+      else tg?.HapticFeedback?.selectionChanged();
+    } catch (e) {}
+  }
 
-function syncBackButton(id) {
-  if (!tg?.BackButton) return;
-  if (id === 'home') { tg.BackButton.hide(); return; }
-  tg.BackButton.show();
-  tg.BackButton.onClick(() => {
-    const prev = history.pop() || 'home';
-    document.querySelectorAll('.screen').forEach(x => x.classList.remove('active'));
-    document.getElementById(prev)?.classList.add('active');
-    window.scrollTo(0, 0);
-    syncBackButton(prev);
-  });
-}
+  /* =========================================================
+     ROUTER
+     ========================================================= */
+  const history = [];
+  let currentScreen = 'home';
+  const MAX_HISTORY = 30;
 
-function jur(j) {
-  document.getElementById('jt').textContent = j;
-  show('intake');
-}
+  function show(id, { push = true } = {}) {
+    const el = document.getElementById(id);
+    if (!el) return;
 
-/* ================ QUESTIONS =============== */
-function pick(btn, val) {
-  const row = btn.parentElement;
-  row.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  btn.dataset.value = val;
-  if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-}
-
-/* ================= SHOP ================== */
-async function buy(title, price) {
-  document.getElementById('payPrice').textContent = price;
-  show('payment');
-  let plan = 'single';
-  if (title.includes('5 докум')) plan = 'pack5';
-  else if (title.includes('10 докум')) plan = 'pack10';
-  else if (title.includes('Безлимит')) plan = 'unlimited';
-  toast('Создаём счёт...');
-  try {
-    const res = await fetch(CONFIG.api + '/api/invoice', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-  plan,
-  userId: tg?.initDataUnsafe?.user?.id || null
-      })
-    }); 
-    const data = await res.json();
-    if (data.ok && data.pay_url) {
-      if (tg?.openLink) tg.openLink(data.pay_url);
-      else window.open(data.pay_url, '_blank');
-      toast('Счёт создан — оплатите в @CryptoBot');
-    } else {
-      toast('Ошибка: не удалось создать счёт');
+    if (push && currentScreen && currentScreen !== id) {
+      history.push(currentScreen);
+      if (history.length > MAX_HISTORY) history.shift();
     }
-  } catch (e) {
-    toast('Ошибка связи с сервером');
-    console.error(e);
+
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    currentScreen = id;
+    window.scrollTo(0, 0);
+    syncBackButton(id);
+    haptic('selection');
   }
- }
 
-/* ================= WHEEL ================= */
-const wheelPrizes = [
-  '🎉 Бесплатный документ',
-  '🎁 Бесплатный документ за друга',
-  '🔄 Прокрути ещё раз',
-  '🔥 50% скидка — 3 часа',
-  '💎 5 документов за 3 000 ₸'
-];
-let spinning = false;
-function spin() {
-  if (spinning) return;
-  spinning = true;
-  const el = document.getElementById('wheelEl');
-  const deg = 1440 + Math.floor(Math.random() * 360);
-  el.style.transition = 'transform 2.2s cubic-bezier(.17,.67,.2,1)';
-  el.style.transform = `rotate(${deg}deg)`;
-  if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-  setTimeout(() => {
-    const prize = wheelPrizes[Math.floor(Math.random() * wheelPrizes.length)];
-    const box = document.getElementById('wr');
-    box.style.display = 'block';
-    box.innerHTML = `<b>${prize}</b><p class="muted">Демо-результат.</p>`;
-    spinning = false;
-    if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-  }, 2300);
-}
+  function goBack() {
+    const prev = history.pop() || 'home';
+    show(prev, { push: false });
+  }
 
-/* ================= UTIL ================== */
-let toastTimer;
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
-}
+  // Один раз навешиваем обработчик — не перезаписываем
+  if (tg?.BackButton) {
+    tg.BackButton.onClick(goBack);
+  }
 
-function openLink(url) {
-  if (tg?.openLink) tg.openLink(url);
-  else window.open(url, '_blank');
-}
+  function syncBackButton(id) {
+    if (!tg?.BackButton) return;
+    if (id === 'home') tg.BackButton.hide();
+    else tg.BackButton.show();
+  }
 
-/* ================ INIT =================== */
-document.getElementById('walletAddr').textContent = CONFIG.wallet;
-</script>
-</body>
-     </html>
-  
+  /* =========================================================
+     SAFE LINK
+     ========================================================= */
+  function isSafeUrl(url) {
+    try {
+      const u = new URL(url);
+      return CONFIG.allowedLinkHosts.some(h => u.hostname === h || u.hostname.endsWith('.' + h));
+    } catch { return false; }
+  }
+
+  function openLink(url) {
+    if (!isSafeUrl(url)) {
+      console.warn('Blocked unsafe link:', url);
+      toast('Ссылка заблокирована');
+      return;
+    }
+    if (tg?.openLink) tg.openLink(url);
+    else window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
+  /* =========================================================
+     TOAST
+     ========================================================= */
+  let toastTimer;
+  function toast(msg, ms = 2200) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), ms);
+  }
+
+  /* =========================================================
+     QUESTIONS
+     ========================================================= */
+  function pick(btn) {
+    const row = btn.parentElement;
+    row.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    haptic('impact');
+  }
+
+  /* =========================================================
+     SHOP + PAYMENT
+     ========================================================= */
+  function renderShop() {
+    const list = document.getElementById('shopList');
+    list.innerHTML = '';
+    Object.entries(CONFIG.pl
