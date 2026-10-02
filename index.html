@@ -479,4 +479,162 @@
       card.innerHTML = `
         <b>${p.title}</b>
         <div class="price">${p.label}</div>
-    
+            <button class="btn" data-buy="${key}">Купить</button>
+      `;
+      list.appendChild(card);
+    });
+  }
+
+  let buying = false;
+
+  async function buy(planKey) {
+    if (buying) return;
+    const plan = CONFIG.plans[planKey];
+    if (!plan) { toast('Неизвестный тариф'); return; }
+
+    buying = true;
+    const btn = document.getElementById('payBtn');
+    const originalHTML = btn?.innerHTML;
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Создаём счёт...';
+    }
+    haptic('impact');
+
+    try {
+      const res = await fetch(CONFIG.api + '/api/invoice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan: planKey,
+          initData: tg?.initData || ''
+        })
+      });
+
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+
+      if (data?.ok && data.pay_url) {
+        if (!isSafeUrl(data.pay_url)) throw new Error('Unsafe pay_url');
+        if (data.invoice_id) {
+          sessionStorage.setItem('lastInvoice', String(data.invoice_id));
+        }
+        toast('Счёт создан — переходим к оплате');
+        if (tg?.openLink) tg.openLink(data.pay_url);
+        else window.open(data.pay_url, '_blank', 'noopener,noreferrer');
+
+        pollInvoiceStatus(data.invoice_id);
+      } else {
+        toast('Не удалось создать счёт');
+      }
+    } catch (e) {
+      console.error(e);
+      toast('Ошибка связи с сервером');
+    } finally {
+      buying = false;
+      if (btn && originalHTML) {
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+      }
+    }
+  }
+
+  async function pollInvoiceStatus(invoiceId) {
+    if (!invoiceId) return;
+    const deadline = Date.now() + 10 * 60 * 1000;
+    const tick = async () => {
+      if (Date.now() > deadline) return;
+      try {
+        const r = await fetch(`${CONFIG.api}/api/invoice/${encodeURIComponent(invoiceId)}/status`, {
+          headers: { 'X-Init-Data': tg?.initData || '' }
+        });
+        if (r.ok) {
+          const d = await r.json();
+          if (d?.status === 'paid') {
+            haptic('success');
+            show('paid');
+            return;
+          }
+        }
+      } catch (e) { /* игнорируем */ }
+      setTimeout(tick, 3000);
+    };
+    tick();
+  }
+
+  /* =========================================================
+     WHEEL
+     ========================================================= */
+  const wheelPrizes = [
+    '🎉 Бесплатный документ',
+    '🎁 Бесплатный документ за друга',
+    '🔄 Прокрути ещё раз',
+    '🔥 50% скидка — 3 часа',
+    '💎 5 документов за 3 000 ₸'
+  ];
+  let spinning = false;
+
+  function spin() {
+    if (spinning) return;
+    spinning = true;
+    const btn = document.getElementById('spinBtn');
+    const el = document.getElementById('wheelEl');
+    if (btn) btn.disabled = true;
+
+    const deg = 1440 + Math.floor(Math.random() * 360);
+    el.style.transition = 'transform 2.2s cubic-bezier(.17,.67,.2,1)';
+    el.style.transform = `rotate(${deg}deg)`;
+    haptic('impact');
+
+    setTimeout(() => {
+      const prize = wheelPrizes[Math.floor(Math.random() * wheelPrizes.length)];
+      const box = document.getElementById('wr');
+      box.style.display = 'block';
+      box.innerHTML = `<b>${prize}</b><p class="muted">Демо-результат.</p>`;
+      spinning = false;
+      if (btn) btn.disabled = false;
+      haptic('success');
+    }, 2300);
+  }
+
+  /* =========================================================
+     EVENT DELEGATION
+     ========================================================= */
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-nav],[data-link],[data-jur],[data-pick],[data-buy],[data-toast]');
+    if (!t) return;
+
+    if (t.dataset.nav)  { show(t.dataset.nav); return; }
+    if (t.dataset.link) { openLink(t.dataset.link); return; }
+    if (t.dataset.jur)  {
+      const jt = document.getElementById('jt');
+      if (jt) jt.textContent = t.dataset.jur;
+      show('intake');
+      return;
+    }
+    if (t.dataset.pick) { pick(t); return; }
+    if (t.dataset.buy)  {
+      const key = t.dataset.buy;
+      const plan = CONFIG.plans[key];
+      if (plan) {
+        document.getElementById('payPrice').textContent = plan.label;
+        document.getElementById('payBtn').dataset.buy = key;
+        show('payment');
+        buy(key);
+      }
+      return;
+    }
+    if (t.dataset.toast) { toast(t.dataset.toast); return; }
+  });
+
+  /* =========================================================
+     INIT
+     ========================================================= */
+  initTelegram();
+  renderShop();
+
+  window.PRAVO = { show, buy, openLink, toast, CONFIG, spin };
+})();
+</script>
+</body>
+</html>
